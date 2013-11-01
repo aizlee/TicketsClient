@@ -103,10 +103,10 @@ return array(
 		*/
 		// uncomment the following to use a MySQL database
 		'db'=>array(
-			'connectionString' => 'mysql:host=localhost;dbname=BugListSoap',
+			'connectionString' => 'mysql:host=localhost;dbname=BugsListSoap',
 			'emulatePrepare' => true,
 			'username' => 'root',
-			'password' => 'ssb',
+			'password' => '123',
 			'charset' => 'utf8',
 			'tablePrefix' => 'tbl_',
 		),

@@ -32,7 +32,7 @@ class BugsController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update'),
+				'actions'=>array('create','update', 'createBug'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -69,15 +69,20 @@ class BugsController extends Controller
 
 		if(isset($_POST['Bugs']))
 		{
-			$model->attributes=$_POST['Bugs'];
-			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
+			//$model->attributes=$_POST['Bugs'];
+			$temp = $_POST['Bugs'];
+			$temp['id_client'] = Yii::app()->user->id;
+			$temp['receive_date'] = date("Y-m-d");
+			$client=new SoapClient('http://localhost/buglist/index.php?r=stock/quote', array('exceptions' => true, 'cache_wsdl' => WSDL_CACHE_NONE, 'trace' => true));
+			$client->addBug($temp);
+		 	$this->redirect(array('index'));
 		}
 
 		$this->render('create',array(
 			'model'=>$model,
 		));
 	}
+
 
 	/**
 	 * Updates a particular model.
@@ -108,24 +113,15 @@ class BugsController extends Controller
 	 */
 	public function actionIndex()
 	{
-		$condition = 'status < 4  and id_creator =' . Yii::app()->user->id;
-	 	$ord = 'status asc ,receive_date asc';
-
-		$query = Yii::app()->db->createCommand()
-		    ->select('*')
-		    ->from('bugs')
-		    ->where($condition)
-		    ->order($ord)
-		    ->text;
-
-		$count=count(Yii::app()->db->createCommand($query)->queryAll());
-		$dataProvider = new CSqlDataProvider($query, array(
-			'totalItemCount'=>$count,
-			'keyField'=>'id',
-			'pagination'=>array(
-				'pageSize'=>7,
-			 ),
-		));
+		$client=new SoapClient('http://localhost/buglist/index.php?r=stock/quote', array('exceptions' => true, 'cache_wsdl' => WSDL_CACHE_NONE, 'trace' => true));
+		$id =  Yii::app()->user->id;
+		$query=$client->loadModel($id);	
+		$dataProvider=new CArrayDataProvider($query, array(
+	        'id'=>'id',
+	        'pagination'=>array(
+	            'pageSize'=>10,
+	        ),
+	    ));
 		$this->render('index',array(
 			'dataProvider'=>$dataProvider,
 		));

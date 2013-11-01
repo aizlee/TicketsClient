@@ -12,7 +12,6 @@ if (Yii::app()->controller->getAction()->getId()=='index'){
 
 	<h1>Bugs</h1>
 <?php
-	//var_dump($dataProvider);
 	$this->widget('bootstrap.widgets.TbListView', array(
 		'dataProvider'=>$dataProvider,
 		'itemView'=>'_view',

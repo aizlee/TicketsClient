@@ -28,14 +28,14 @@ class Bugs extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('address, receive_date, post', 'required'),
-			array('id_employee, status', 'numerical', 'integerOnly'=>true),
+			array('id_employee, status, id_creator', 'numerical', 'integerOnly'=>true),
 			array('address', 'length', 'max'=>128),
 			array('post', 'length', 'max'=>256),
 			array('id_client', 'length', 'max'=>256),
 			array('start_date, complete_date', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, id_employee, id_client, address, receive_date, post, start_date, complete_date, status', 'safe', 'on'=>'search'),
+			array('id, id_employee, id_client, id_creator,  address, receive_date, post, start_date, complete_date, status', 'safe', 'on'=>'search'),
 		);
 	}
 	

@@ -1,7 +1,6 @@
 <?php
 /* @var $this BugsController */
 /* @var $data Bugs */
-var_dump($data);
 ?>
 
 <div class="view">
