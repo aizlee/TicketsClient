@@ -2,6 +2,7 @@
 /* @var $this BugsController */
 /* @var $model Bugs */
 /* @var $form CActiveForm */
+Yii::import('ext.imperaviRedactorWidget.ImperaviRedactorWidget');
 ?>
 
 <div class="form">
@@ -34,11 +35,40 @@
 		<?php echo $form->error($model,'address'); ?>
 	</div>
 
-	<div class="row">
-		<?php echo $form->labelEx($model,'post'); ?>
-		<?php echo $form->textField($model,'post',array('size'=>60,'maxlength'=>256)); ?>
-		<?php echo $form->error($model,'post'); ?>
-	</div>
+	
+	<?php 
+	$attribute='post';
+	$this->widget('ImperaviRedactorWidget', array(
+    'model'=>$model,
+    'attribute'=>$attribute,
+    'plugins' => array(
+        'imperavi' => array(
+            'js' => array('extimgupl.js','extfupl.js'),
+            'css' => array('redactor_plugins.css'),
+        )),
+    'options' => array(
+    	'lang'=>'ru', 
+                'thumbLinkClass'=>'athumbnail', //Класс по-умолчанию для ссылки на полное изображение вокруг thumbnail
+                'thumbClass'=>'thumbnail pull-left', //Класс по-умолчанию для  thumbnail
+                'defaultUplthumb'=>true, //Вставлять по-умолчанию после загрузки превью? если нет - полное изображение    
+      	'fileUpload'=>Yii::app()->createUrl('bugs/fileUpload',array(
+            'attr'=>$attribute
+        )),
+        'fileUploadErrorCallback'=>new CJavaScriptExpression(
+            'function(obj,json) { alert(json.error); }'
+        ),
+        'imageUpload'=>Yii::app()->createUrl('bugs/imageUpload',array(
+            'attr'=>$attribute
+        )),
+        'imageGetJson'=>Yii::app()->createUrl('bugs/imageList',array(
+            'attr'=>$attribute
+        )),
+        'imageUploadErrorCallback'=>new CJavaScriptExpression(
+            'function(obj,json) { alert(json.error); }'
+        ),
+                
+      ),
+));?>
 
 	<div class="row buttons">
 		<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>

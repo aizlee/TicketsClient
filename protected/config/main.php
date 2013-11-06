@@ -10,6 +10,7 @@ Yii::setPathOfAlias('bootstrap', dirname(__FILE__).'/../extensions/bootstrap');
 return array(
 	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
 	'name'=>'My Web Application',
+	'defaultController'=>'bugs',
 
 	// preloading 'log' component
 	'preload'=>array('log'),
@@ -19,6 +20,7 @@ return array(
 		'application.models.*',
 		'application.components.*',
         'application.extensions.*',
+        'application.extensions.imperaviRedactorWidget*',
         'application.modules.*',
         'application.modules.user.models.*',
         'application.modules.user.components.*',

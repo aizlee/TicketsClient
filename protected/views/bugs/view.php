@@ -16,6 +16,7 @@ $this->menu=array(
 	$this->widget('bootstrap.widgets.TbListView', array(
 		'dataProvider'=>$model,
 		'itemView'=>'_view',
+		'summaryText'=>'', 
 ));?>
 
 <?php if(count($comments) > 0):?>
@@ -33,7 +34,7 @@ $this->menu=array(
         <?php endforeach;?>
     </ul>
 <?php else:?>
-    <p><?php echo Yii::t('Небыло ни единого комментария!');?></p>
+    <p><?php echo 'Небыло ни единого комментария!';?></p>
 <?php endif; ?>
 
 

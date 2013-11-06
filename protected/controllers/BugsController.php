@@ -32,7 +32,7 @@ class BugsController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update', 'createBug', 'addComment'),
+				'actions'=>array('create','update', 'createBug', 'addComment','fileUpload', 'imageUpload', 'imageList'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -198,4 +198,22 @@ class BugsController extends Controller
 			Yii::app()->end();
 		}
 	}
+
+	public function actions()
+    {
+        return array(
+            'fileUpload'=>array(
+                'class'=>'ext.imperaviRedactorWidget.actions.FileUpload',
+                'uploadCreate'=>true,
+            ),
+            'imageUpload'=>array(
+                'class'=>'ext.imperaviRedactorWidget.actions.ImageUpload',
+                'uploadCreate'=>true,
+                 'permissions'=>0777,
+            ),
+            'imageList'=>array(
+                'class'=>'ext.imperaviRedactorWidget.actions.ImageList',
+            ),
+        );
+    }
 }
