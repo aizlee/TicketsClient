@@ -32,7 +32,7 @@ class BugsController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update', 'createBug'),
+				'actions'=>array('create','update', 'createBug', 'addComment'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -51,8 +51,12 @@ class BugsController extends Controller
 	 */
 	public function actionView($id)
 	{
+		$client=new SoapClient('http://localhost/buglist/index.php?r=stock/quote', array('exceptions' => true, 'cache_wsdl' => WSDL_CACHE_NONE, 'trace' => true));
+			
 		$this->render('view',array(
 			'model'=>$this->loadModel($id),
+			'comments'=>$client->loadComment($id),
+			'id'=>$id,
 		));
 	}
 
@@ -115,6 +119,7 @@ class BugsController extends Controller
 	{
 		$client=new SoapClient('http://localhost/buglist/index.php?r=stock/quote', array('exceptions' => true, 'cache_wsdl' => WSDL_CACHE_NONE, 'trace' => true));
 		$id =  Yii::app()->user->id;
+
 		$query=$client->loadModel($id);	
 		$dataProvider=new CArrayDataProvider($query, array(
 	        'id'=>'id',
@@ -122,11 +127,28 @@ class BugsController extends Controller
 	            'pageSize'=>10,
 	        ),
 	    ));
+
 		$this->render('index',array(
 			'dataProvider'=>$dataProvider,
 		));
 	}
 
+	public function actionAddComment()
+	{
+		$client = new SoapClient('http://localhost/buglist/index.php?r=stock/quote', array('exceptions' => true, 'cache_wsdl' => WSDL_CACHE_NONE, 'trace' => true));
+		$commentData['comment_text'] =$_POST['Text'];
+		$commentData['user_name'] = Yii::app()->user->username;
+		$commentData['user_email'] = Yii::app()->user->email;
+		$commentData['create_time'] = date("U");
+		$commentData['owner_id'] = $_GET['id'];
+		$commentData['owner_name'] = 'Tickets';
+		$client->addComment($commentData);
+		 $this->redirect(array('view','id'=>$_GET['id']));
+		// 	'model'=>$this->loadModel($_GET['owner_id']),
+		// 	'comments'=>$client->loadComment($_GET['owner_id']),
+		// 	'id'=>$_GET['owner_id'],
+		//));
+	}
 	/**
 	 * Manages all models.
 	 */
@@ -151,7 +173,14 @@ class BugsController extends Controller
 	 */
 	public function loadModel($id)
 	{
-		$model=Bugs::model()->findByPk($id);
+		$client=new SoapClient('http://localhost/buglist/index.php?r=stock/quote', array('exceptions' => true, 'cache_wsdl' => WSDL_CACHE_NONE, 'trace' => true));
+		$user_id =  Yii::app()->user->id;
+
+		$query=$client->loadTicket($id);
+		$model=new CArrayDataProvider($query, array(
+	        'id'=>'id',
+	        'keyField' => 'id',
+	    ));
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');
 		return $model;
